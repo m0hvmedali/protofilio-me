@@ -44,19 +44,6 @@ export default function AdminDashboard() {
   
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-      if (user && user.email === 'mohamedalix546@gmail.com') {
-        fetchProfile();
-        fetchProjects();
-        fetchCourses();
-      }
-    });
-    return unsub;
-  }, []);
-
   const fetchProfile = async () => {
     const res = await fetch('/api/profile');
     if (res.ok) {
@@ -77,6 +64,19 @@ export default function AdminDashboard() {
       setCourses(await res.json());
     }
   };
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+      if (user && user.email === 'mohamedalix546@gmail.com') {
+        fetchProfile();
+        fetchProjects();
+        fetchCourses();
+      }
+    });
+    return unsub;
+  }, []);
 
   const handleLogin = async () => {
     try {

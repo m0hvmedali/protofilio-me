@@ -12,10 +12,18 @@ import { desc } from 'drizzle-orm';
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const dbProjects = await db.select().from(projectsTable).orderBy(desc(projectsTable.createdAt));
-  const dbCourses = await db.select().from(coursesTable).orderBy(desc(coursesTable.createdAt));
-  const dbProfiles = await db.select().from(profiles).limit(1);
-  const dbProfile = dbProfiles[0];
+  let dbProjects: any[] = [];
+  let dbCourses: any[] = [];
+  let dbProfile: any = null;
+
+  try {
+    dbProjects = await db.select().from(projectsTable).orderBy(desc(projectsTable.createdAt));
+    dbCourses = await db.select().from(coursesTable).orderBy(desc(coursesTable.createdAt));
+    const dbProfiles = await db.select().from(profiles).limit(1);
+    dbProfile = dbProfiles[0];
+  } catch (error) {
+    console.error("Database query failed", error);
+  }
 
   const mappedProfile = dbProfile ? {
     id: dbProfile.id.toString(),

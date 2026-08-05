@@ -12,7 +12,7 @@ export default function FAB({ profile }: { profile: UserProfile }) {
     { icon: Mail, label: 'Email', href: `mailto:${profile.email}`, color: 'hover:text-red-400' },
     { icon: Briefcase, label: 'LinkedIn', href: profile.linkedin_url, color: 'hover:text-blue-400' },
     { icon: Code2, label: 'GitHub', href: profile.github_url, color: 'hover:text-gray-300' },
-    { icon: Phone, label: 'WhatsApp', href: `https://wa.me/${profile.whatsapp?.replace('+', '')}`, color: 'hover:text-green-400' },
+    { icon: Phone, label: 'WhatsApp', href: profile.whatsapp ? `https://wa.me/${profile.whatsapp.replace('+', '')}` : undefined, color: 'hover:text-green-400' },
   ].filter(opt => opt.href);
 
   return (
