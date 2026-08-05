@@ -3,7 +3,7 @@
 import { motion } from 'motion/react';
 import { Project } from '@/lib/schema';
 import Image from 'next/image';
-import { ExternalLink, Github } from 'lucide-react';
+import { ExternalLink, Code2 } from 'lucide-react';
 
 export default function ProjectsGrid({ projects }: { projects: Project[] }) {
   return (
@@ -83,7 +83,7 @@ export default function ProjectsGrid({ projects }: { projects: Project[] }) {
                       className="inline-flex items-center justify-center gap-2 px-6 py-3 glass hover:bg-white/10 transition-colors border border-white/10 font-bold rounded-lg"
                       aria-label="View Source"
                     >
-                      <Github className="w-5 h-5" />
+                      <Code2 className="w-5 h-5" />
                       View Source
                     </a>
                   )}

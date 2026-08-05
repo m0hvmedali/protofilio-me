@@ -4,9 +4,49 @@ import Timeline from '@/components/Timeline';
 import Services from '@/components/Services';
 import ProjectsGrid from '@/components/ProjectsGrid';
 import FAB from '@/components/FAB';
-import { userProfile, skills, courses, services, projects } from '@/lib/data';
+import { userProfile, skills, services } from '@/lib/data';
+import { db } from '@/src/db';
+import { projects as projectsTable, courses as coursesTable, profiles } from '@/src/db/schema';
+import { desc } from 'drizzle-orm';
 
-export default function Home() {
+export default async function Home() {
+  const dbProjects = await db.select().from(projectsTable).orderBy(desc(projectsTable.createdAt));
+  const dbCourses = await db.select().from(coursesTable).orderBy(desc(coursesTable.createdAt));
+  const dbProfiles = await db.select().from(profiles).limit(1);
+  const dbProfile = dbProfiles[0];
+
+  const mappedProfile = dbProfile ? {
+    id: dbProfile.id.toString(),
+    name: dbProfile.name,
+    headline: dbProfile.role,
+    bio: dbProfile.bio,
+    resume_url: dbProfile.resumeUrl,
+    email: dbProfile.email,
+    linkedin_url: dbProfile.linkedinUrl,
+    github_url: dbProfile.githubUrl,
+    whatsapp: dbProfile.whatsapp || undefined,
+  } : userProfile;
+  
+  // Map db projects to match the interface expected by ProjectsGrid
+  const mappedProjects = dbProjects.map(p => ({
+    id: p.id.toString(),
+    title: p.title,
+    description: p.description,
+    poster_url: p.posterUrl,
+    tech_stack: p.techStack as string[],
+    live_link: p.liveLink || undefined,
+    repo_link: p.repoLink || undefined,
+  }));
+
+  // Map db courses to match the interface expected by Timeline
+  const mappedCourses = dbCourses.map(c => ({
+    id: c.id.toString(),
+    title: c.title,
+    provider: c.provider,
+    date: c.date,
+    key_takeaway: c.keyTakeaway,
+  }));
+
   return (
     <main className="relative min-h-screen bg-background">
       {/* Decorative gradient overlay for the entire page */}
@@ -15,16 +55,26 @@ export default function Home() {
         <div className="absolute bottom-0 right-1/4 w-[800px] h-[800px] bg-blue-500/3 rounded-full blur-[150px]" />
       </div>
 
-      <Hero profile={userProfile} />
+      <header className="absolute top-0 left-0 w-full p-6 lg:px-12 flex justify-end z-50">
+        <a 
+          href={`mailto:${mappedProfile.email}`} 
+          className="glass px-6 py-2.5 rounded-full text-sm font-bold hover:bg-white/10 transition-colors flex items-center gap-2"
+        >
+          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+          Contact Me
+        </a>
+      </header>
+
+      <Hero profile={mappedProfile} avatarUrl={dbProfile?.avatarUrl} />
       <SkillsGrid skills={skills} />
       <Services services={services} />
-      <Timeline courses={courses} />
-      <ProjectsGrid projects={projects} />
+      <Timeline courses={mappedCourses} />
+      <ProjectsGrid projects={mappedProjects} />
       
-      <FAB profile={userProfile} />
+      <FAB profile={mappedProfile} />
       
       <footer className="py-8 text-center text-secondary/60 text-sm relative z-10 border-t border-white/5">
-        <p>&copy; {new Date().getFullYear()} {userProfile.name}. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} {mappedProfile.name}. All rights reserved. <a href="/admin" className="hover:text-accent ml-2 transition-colors">Admin Area</a></p>
       </footer>
     </main>
   );

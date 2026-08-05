@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MessageSquare, Mail, Linkedin, Github, Phone, X } from 'lucide-react';
+import { MessageSquare, Mail, Briefcase, Code2, Phone, X } from 'lucide-react';
 import { UserProfile } from '@/lib/schema';
 
 export default function FAB({ profile }: { profile: UserProfile }) {
@@ -10,8 +10,8 @@ export default function FAB({ profile }: { profile: UserProfile }) {
 
   const contactOptions = [
     { icon: Mail, label: 'Email', href: `mailto:${profile.email}`, color: 'hover:text-red-400' },
-    { icon: Linkedin, label: 'LinkedIn', href: profile.linkedin_url, color: 'hover:text-blue-400' },
-    { icon: Github, label: 'GitHub', href: profile.github_url, color: 'hover:text-gray-300' },
+    { icon: Briefcase, label: 'LinkedIn', href: profile.linkedin_url, color: 'hover:text-blue-400' },
+    { icon: Code2, label: 'GitHub', href: profile.github_url, color: 'hover:text-gray-300' },
     { icon: Phone, label: 'WhatsApp', href: `https://wa.me/${profile.whatsapp?.replace('+', '')}`, color: 'hover:text-green-400' },
   ].filter(opt => opt.href);
 

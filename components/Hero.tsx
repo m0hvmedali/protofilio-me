@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { UserProfile } from '@/lib/schema';
 import { Download, ChevronRight } from 'lucide-react';
 
-export default function Hero({ profile }: { profile: UserProfile }) {
+export default function Hero({ profile, avatarUrl }: { profile: UserProfile, avatarUrl?: string }) {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center pt-20 pb-10 px-6 lg:px-12 overflow-hidden">
       {/* Background ambient glow */}
@@ -57,8 +57,13 @@ export default function Hero({ profile }: { profile: UserProfile }) {
             
             <div className="flex items-center gap-6 mb-8">
               <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-accent to-blue-600 p-[2px]">
-                <div className="w-full h-full rounded-full bg-background flex items-center justify-center text-2xl font-bold">
-                  {profile.name.charAt(0)}
+                <div className="w-full h-full rounded-full bg-background flex items-center justify-center text-2xl font-bold overflow-hidden">
+                  {avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
+                  ) : (
+                    profile.name.charAt(0)
+                  )}
                 </div>
               </div>
               <div>
@@ -70,7 +75,7 @@ export default function Hero({ profile }: { profile: UserProfile }) {
             <div className="space-y-4">
               <div className="flex justify-between items-center border-b border-white/5 pb-4">
                 <span className="text-secondary text-sm uppercase tracking-wider">Experience</span>
-                <span className="font-semibold text-lg">7+ Years</span>
+                <span className="font-semibold text-lg">2 Years</span>
               </div>
               <div className="flex justify-between items-center border-b border-white/5 pb-4">
                 <span className="text-secondary text-sm uppercase tracking-wider">Availability</span>
