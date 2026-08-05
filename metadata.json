@@ -1,0 +1,6 @@
+{
+  "name": "Premium Portfolio Web App",
+  "description": "An ultra-professional, high-conversion Portfolio Web Application that acts as a premium service-selling platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
