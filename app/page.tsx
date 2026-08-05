@@ -4,10 +4,8 @@ import Timeline from '@/components/Timeline';
 import Services from '@/components/Services';
 import ProjectsGrid from '@/components/ProjectsGrid';
 import FAB from '@/components/FAB';
-import { userProfile, skills, services } from '@/lib/data';
-import { db } from '@/src/db';
-import { projects as projectsTable, courses as coursesTable, profiles } from '@/src/db/schema';
-import { desc } from 'drizzle-orm';
+import { userProfile, skills, services, projects as staticProjects, courses as staticCourses } from '@/lib/data';
+import { supabase } from '@/src/db/supabase';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,10 +15,20 @@ export default async function Home() {
   let dbProfile: any = null;
 
   try {
-    dbProjects = await db.select().from(projectsTable).orderBy(desc(projectsTable.createdAt));
-    dbCourses = await db.select().from(coursesTable).orderBy(desc(coursesTable.createdAt));
-    const dbProfiles = await db.select().from(profiles).limit(1);
-    dbProfile = dbProfiles[0];
+    const { data: profilesData } = await supabase.from('profiles').select('*').limit(1);
+    if (profilesData && profilesData.length > 0) {
+      dbProfile = profilesData[0];
+    }
+
+    const { data: projectsData } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+    if (projectsData) {
+      dbProjects = projectsData;
+    }
+
+    const { data: coursesData } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
+    if (coursesData) {
+      dbCourses = coursesData;
+    }
   } catch (error) {
     console.error("Database query failed", error);
   }
@@ -30,32 +38,31 @@ export default async function Home() {
     name: dbProfile.name,
     headline: dbProfile.role,
     bio: dbProfile.bio,
-    resume_url: dbProfile.resumeUrl,
+    resume_url: dbProfile.resume_url,
     email: dbProfile.email,
-    linkedin_url: dbProfile.linkedinUrl,
-    github_url: dbProfile.githubUrl,
+    linkedin_url: dbProfile.linkedin_url,
+    github_url: dbProfile.github_url,
     whatsapp: dbProfile.whatsapp || undefined,
+    avatar_url: dbProfile.avatar_url || undefined,
   } : userProfile;
   
-  // Map db projects to match the interface expected by ProjectsGrid
-  const mappedProjects = dbProjects.map(p => ({
+  const mappedProjects = dbProjects.length > 0 ? dbProjects.map(p => ({
     id: p.id.toString(),
     title: p.title,
     description: p.description,
-    poster_url: p.posterUrl,
-    tech_stack: p.techStack as string[],
-    live_link: p.liveLink || undefined,
-    repo_link: p.repoLink || undefined,
-  }));
+    poster_url: p.poster_url,
+    tech_stack: p.tech_stack as string[],
+    live_link: p.live_link || undefined,
+    repo_link: p.repo_link || undefined,
+  })) : staticProjects;
 
-  // Map db courses to match the interface expected by Timeline
-  const mappedCourses = dbCourses.map(c => ({
+  const mappedCourses = dbCourses.length > 0 ? dbCourses.map(c => ({
     id: c.id.toString(),
     title: c.title,
     provider: c.provider,
     date: c.date,
-    key_takeaway: c.keyTakeaway,
-  }));
+    key_takeaway: c.key_takeaway,
+  })) : staticCourses;
 
   return (
     <main className="relative min-h-screen bg-background">
@@ -75,7 +82,7 @@ export default async function Home() {
         </a>
       </header>
 
-      <Hero profile={mappedProfile} avatarUrl={dbProfile?.avatarUrl} />
+      <Hero profile={mappedProfile} avatarUrl={dbProfile?.avatar_url || mappedProfile.avatar_url} />
       <SkillsGrid skills={skills} />
       <Services services={services} />
       <Timeline courses={mappedCourses} />

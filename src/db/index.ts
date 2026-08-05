@@ -8,11 +8,11 @@ declare global {
 
 export const createPool = () => {
   if (!global._postgresPool) {
+    if (!process.env.DATABASE_URL) {
+      console.warn("DATABASE_URL is not set. Database queries will fail.");
+    }
     global._postgresPool = new Pool({
-      host: process.env.SQL_HOST,
-      user: process.env.SQL_USER,
-      password: process.env.SQL_PASSWORD,
-      database: process.env.SQL_DB_NAME,
+      connectionString: process.env.DATABASE_URL || "postgres://invalid:invalid@localhost/invalid", // Prevent attempting to connect to localhost with current user
     });
   }
   return global._postgresPool;

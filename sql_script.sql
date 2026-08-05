@@ -1,0 +1,58 @@
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  uid TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS profiles (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  role TEXT NOT NULL,
+  bio TEXT NOT NULL,
+  location TEXT NOT NULL,
+  avatar_url TEXT NOT NULL,
+  resume_url TEXT NOT NULL,
+  email TEXT NOT NULL,
+  linkedin_url TEXT NOT NULL,
+  github_url TEXT NOT NULL,
+  whatsapp TEXT,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS projects (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  poster_url TEXT NOT NULL,
+  tech_stack JSONB NOT NULL,
+  live_link TEXT,
+  repo_link TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS skills (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  image_url TEXT NOT NULL,
+  hover_description TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS courses (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  provider TEXT NOT NULL,
+  date TEXT NOT NULL,
+  key_takeaway TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS services (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  icon TEXT NOT NULL,
+  short_desc TEXT NOT NULL,
+  detailed_deliverables JSONB NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

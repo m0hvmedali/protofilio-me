@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/src/db';
-import { profiles } from '@/src/db/schema';
+import { supabase } from '@/src/db/supabase';
 import { adminAuth } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
@@ -20,11 +19,25 @@ async function verifyAuth(req: Request) {
 
 export async function GET() {
   try {
-    const allProfiles = await db.select().from(profiles).limit(1);
-    if (allProfiles.length === 0) {
+    const { data: allProfiles, error } = await supabase.from('profiles').select('*').limit(1);
+    if (error) throw error;
+    if (!allProfiles || allProfiles.length === 0) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
     }
-    return NextResponse.json(allProfiles[0]);
+    const dbProfile = allProfiles[0];
+    return NextResponse.json({
+      id: dbProfile.id,
+      name: dbProfile.name,
+      role: dbProfile.role,
+      bio: dbProfile.bio,
+      location: dbProfile.location,
+      avatarUrl: dbProfile.avatar_url,
+      resumeUrl: dbProfile.resume_url,
+      email: dbProfile.email,
+      linkedinUrl: dbProfile.linkedin_url,
+      githubUrl: dbProfile.github_url,
+      whatsapp: dbProfile.whatsapp,
+    });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 });
   }
@@ -36,37 +49,43 @@ export async function PUT(req: Request) {
     const body = await req.json();
     
     // Check if profile exists
-    const existing = await db.select().from(profiles).limit(1);
+    const { data: existing, error: existError } = await supabase.from('profiles').select('*').limit(1);
+    if (existError) throw existError;
+    
     let result;
     
-    if (existing.length === 0) {
+    if (!existing || existing.length === 0) {
       // Insert if doesn't exist
-      result = await db.insert(profiles).values({
+      const { data, error } = await supabase.from('profiles').insert([{
         name: body.name,
         role: body.role,
         bio: body.bio,
         location: body.location,
-        avatarUrl: body.avatarUrl,
-        resumeUrl: body.resumeUrl,
+        avatar_url: body.avatarUrl,
+        resume_url: body.resumeUrl,
         email: body.email,
-        linkedinUrl: body.linkedinUrl,
-        githubUrl: body.githubUrl,
+        linkedin_url: body.linkedinUrl,
+        github_url: body.githubUrl,
         whatsapp: body.whatsapp,
-      }).returning();
+      }]).select();
+      if (error) throw error;
+      result = data;
     } else {
       // Update existing
-      result = await db.update(profiles).set({
+      const { data, error } = await supabase.from('profiles').update({
         name: body.name,
         role: body.role,
         bio: body.bio,
         location: body.location,
-        avatarUrl: body.avatarUrl,
-        resumeUrl: body.resumeUrl,
+        avatar_url: body.avatarUrl,
+        resume_url: body.resumeUrl,
         email: body.email,
-        linkedinUrl: body.linkedinUrl,
-        githubUrl: body.githubUrl,
+        linkedin_url: body.linkedinUrl,
+        github_url: body.githubUrl,
         whatsapp: body.whatsapp,
-      }).returning();
+      }).eq('id', existing[0].id).select();
+      if (error) throw error;
+      result = data;
     }
     return NextResponse.json(result[0]);
   } catch (error: any) {

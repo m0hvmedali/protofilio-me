@@ -16,6 +16,7 @@ export interface UserProfile {
   linkedin_url?: string;
   github_url?: string;
   whatsapp?: string;
+  avatar_url?: string;
 }
 
 // 2. Skills_Posters

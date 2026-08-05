@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/src/db';
-import { projects } from '@/src/db/schema';
+import { supabase } from '@/src/db/supabase';
 import { adminAuth } from '@/lib/firebase-admin';
 
 export const dynamic = 'force-dynamic';
@@ -21,8 +20,20 @@ async function verifyAuth(req: Request) {
 
 export async function GET() {
   try {
-    const allProjects = await db.select().from(projects);
-    return NextResponse.json(allProjects);
+    const { data: allProjects, error } = await supabase.from('projects').select('*');
+    if (error) throw error;
+    
+    const mapped = allProjects.map(p => ({
+      id: p.id,
+      title: p.title,
+      description: p.description,
+      posterUrl: p.poster_url,
+      techStack: p.tech_stack,
+      liveLink: p.live_link,
+      repoLink: p.repo_link,
+    }));
+    
+    return NextResponse.json(mapped);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
   }
@@ -32,14 +43,16 @@ export async function POST(req: Request) {
   try {
     await verifyAuth(req);
     const body = await req.json();
-    const result = await db.insert(projects).values({
+    const { data: result, error } = await supabase.from('projects').insert([{
       title: body.title,
       description: body.description,
-      posterUrl: body.posterUrl,
-      techStack: body.techStack,
-      liveLink: body.liveLink,
-      repoLink: body.repoLink,
-    }).returning();
+      poster_url: body.posterUrl,
+      tech_stack: body.techStack,
+      live_link: body.liveLink,
+      repo_link: body.repoLink,
+    }]).select();
+    
+    if (error) throw error;
     return NextResponse.json(result[0]);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: error.message.includes('Forbidden') ? 403 : 401 });

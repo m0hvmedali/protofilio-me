@@ -5,11 +5,12 @@ export const userProfile: UserProfile = {
   name: 'Mohamed Aly Maher',
   headline: 'Full-Stack Developer & AI Integrator',
   bio: 'Highly analytical Full-Stack Developer and AI Integrator with a deep foundation in applied mathematics and networking. Expert in architecting scalable backend systems, integrating sophisticated Natural Language Processing (NLP) models, and building intuitive, data-rich frontend experiences. Proven track record in developing complex API ecosystems and AI-driven platforms that bridge the gap between theoretical science and high-performance software solutions.',
-  resume_url: '#',
+  resume_url: 'https://docs.google.com/document/d/19roKNpFvuCNr2YdufpV0EfKenaplcWMbnlKtAwB-2_c/edit?usp=sharing',
   email: 'mohamedalix546@gmail.com',
-  linkedin_url: 'https://linkedin.com/in/mohamedalymaher',
-  github_url: 'https://github.com/mohamedalymaher',
-  whatsapp: '+201281320192',
+  linkedin_url: 'https://www.linkedin.com/in/mohamed-ali-b9aba5231/',
+  github_url: 'https://github.com/m0hvmedali',
+  whatsapp: '01281320192',
+  avatar_url: 'https://media.licdn.com/dms/image/v2/D4D03AQHGtDQHl3_prw/profile-displayphoto-scale_400_400/B4DZ.ys2wUHQAg-/0/1785409533444?e=1787788800&v=beta&t=jNja-ZPWNbgGHwP1KT6jeTXlHClg5AEmtqBhRdoevQs',
 };
 
 export const skills: Skill[] = [
