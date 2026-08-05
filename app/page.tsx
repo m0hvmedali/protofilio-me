@@ -9,6 +9,8 @@ import { db } from '@/src/db';
 import { projects as projectsTable, courses as coursesTable, profiles } from '@/src/db/schema';
 import { desc } from 'drizzle-orm';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const dbProjects = await db.select().from(projectsTable).orderBy(desc(projectsTable.createdAt));
   const dbCourses = await db.select().from(coursesTable).orderBy(desc(coursesTable.createdAt));

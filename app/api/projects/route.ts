@@ -3,6 +3,8 @@ import { db } from '@/src/db';
 import { projects } from '@/src/db/schema';
 import { adminAuth } from '@/lib/firebase-admin';
 
+export const dynamic = 'force-dynamic';
+
 async function verifyAuth(req: Request) {
   const authHeader = req.headers.get('authorization');
   if (!authHeader?.startsWith('Bearer ')) {
